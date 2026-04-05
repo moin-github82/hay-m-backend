@@ -12,17 +12,39 @@ exports.getCards = async (req, res) => {
 
 exports.addCard = async (req, res) => {
   try {
-    const { type, bank, last4, holder, expiry, gradient, accountType, accountNumber } = req.body;
+    // Support both the original field names and the frontend's field names
+    const {
+      type, bank, last4, holder, expiry, gradient, accountType, accountNumber,
+      // Frontend field aliases
+      cardNumber, bankName, expiryDate, cardHolder, network,
+    } = req.body;
+
+    const resolvedType       = type   || network || 'Visa';
+    const resolvedBank       = bank   || bankName;
+    const resolvedExpiry     = expiry || expiryDate;
+    const resolvedHolder     = holder || cardHolder || 'Card Holder';
+    const resolvedRaw        = String(cardNumber || accountNumber || '').replace(/\s/g, '');
+    const resolvedLast4      = last4  || resolvedRaw.slice(-4);
+    const resolvedAccountNum = accountNumber || cardNumber;
+
+    if (!resolvedBank)   return res.status(400).json({ success: false, message: 'Bank name is required' });
+    if (!resolvedLast4)  return res.status(400).json({ success: false, message: 'Card number is required' });
+    if (!resolvedExpiry) return res.status(400).json({ success: false, message: 'Expiry date is required' });
 
     const isFirst = (await Card.countDocuments({ user: req.user._id })) === 0;
 
     const card = await Card.create({
-      user: req.user._id,
-      type, bank, last4, holder, expiry, gradient,
-      accountType: accountType || 'card',
-      accountNumber,
-      isDefault: isFirst,
-      balance: 0,
+      user:          req.user._id,
+      type:          resolvedType,
+      bank:          resolvedBank,
+      last4:         resolvedLast4,
+      holder:        resolvedHolder,
+      expiry:        resolvedExpiry,
+      gradient:      gradient || ['#0A1628', '#1C3D6E'],
+      accountType:   accountType || 'card',
+      accountNumber: resolvedAccountNum,
+      isDefault:     isFirst,
+      balance:       0,
     });
 
     res.status(201).json({ success: true, data: card });
