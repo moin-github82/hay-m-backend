@@ -1,0 +1,18 @@
+services:
+  - type: web
+    name: hay-m-backend
+    runtime: node
+    buildCommand: npm install
+    startCommand: node server.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: MONGODB_URI
+        sync: false        # set this manually in Render dashboard
+      - key: JWT_SECRET
+        sync: false        # set this manually in Render dashboard
+      - key: JWT_EXPIRES_IN
+        value: 7d
+      - key: ALLOWED_ORIGINS
+        sync: false        # e.g. https://hay-m.com,https://hay-m.vercel.app
+    healthCheckPath: /health
