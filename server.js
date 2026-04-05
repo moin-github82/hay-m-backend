@@ -54,13 +54,14 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // ── Routes ─────────────────────────────────────────────────
-app.use('/api/auth',         require('./routes/auth'));
-app.use('/api/dashboard',    require('./routes/dashboard'));
-app.use('/api/goals',        require('./routes/goals'));
-app.use('/api/transactions', require('./routes/transactions'));
-app.use('/api/portfolio',        require('./routes/portfolio'));
-app.use('/api/wallet',           require('./routes/wallet'));
-app.use('/api/savings-tracker',  require('./routes/savingsTracker'));
+app.use('/api/auth',            require('./routes/auth'));
+app.use('/api/dashboard',       require('./routes/dashboard'));
+app.use('/api/goals',           require('./routes/goals'));
+app.use('/api/transactions',    require('./routes/transactions'));
+app.use('/api/portfolio',       require('./routes/portfolio'));
+app.use('/api/wallet',          require('./routes/wallet'));
+app.use('/api/cards',           require('./routes/wallet'));   // alias — frontend uses /cards
+app.use('/api/savings-tracker', require('./routes/savingsTracker'));
 
 // Health check
 app.get('/health', (_req, res) => res.json({ status: 'ok', timestamp: new Date() }));
