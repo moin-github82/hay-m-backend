@@ -6,7 +6,7 @@ const cardSchema = new mongoose.Schema({
   bank:      { type: String, required: true },
   last4:     { type: String, required: true, length: 4 },
   holder:    { type: String, required: true },
-  expiry:    { type: String, required: true },
+  expiry:    { type: String, default: '' },
   balance:   { type: Number, default: 0 },
   gradient:  { type: [String], default: ['#0A1628', '#1C3D6E'] },
   isDefault: { type: Boolean, default: false },

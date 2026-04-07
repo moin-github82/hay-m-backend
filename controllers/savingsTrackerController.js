@@ -1,17 +1,27 @@
 const SavingsTracker = require('../models/SavingsTracker');
 
-// Sample round-up transactions seeded for new users
+// Sample round-up transactions seeded for new users (or users with empty trackers)
 const SEED_ROUNDUPS = [
-  { merchant: 'Costa Coffee',     category: 'food',     icon: 'cafe-outline',          spentAmount: 4.60,  savedAmount: 0.40, note: 'Flat white', createdAt: daysAgo(0) },
-  { merchant: 'Pret A Manger',    category: 'food',     icon: 'restaurant-outline',    spentAmount: 7.30,  savedAmount: 0.70, note: 'Lunch deal', createdAt: daysAgo(1) },
-  { merchant: 'Uber',             category: 'transport',icon: 'car-outline',           spentAmount: 8.20,  savedAmount: 0.80, note: 'Ride to work', createdAt: daysAgo(1) },
-  { merchant: 'Tesco',            category: 'grocery',  icon: 'basket-outline',        spentAmount: 23.45, savedAmount: 0.55, note: 'Weekly shop', createdAt: daysAgo(2) },
-  { merchant: 'McDonald\'s',      category: 'food',     icon: 'fast-food-outline',     spentAmount: 6.75,  savedAmount: 0.25, note: 'Meal deal', createdAt: daysAgo(3) },
-  { merchant: 'Vue Cinema',       category: 'leisure',  icon: 'film-outline',          spentAmount: 12.50, savedAmount: 0.50, note: 'Movie night', createdAt: daysAgo(4) },
-  { merchant: 'Spotify',          category: 'subscript',icon: 'musical-notes-outline', spentAmount: 9.99,  savedAmount: 0.01, note: 'Monthly plan', createdAt: daysAgo(5) },
-  { merchant: 'Amazon',           category: 'shopping', icon: 'bag-outline',           spentAmount: 15.30, savedAmount: 0.70, note: 'Online order', createdAt: daysAgo(6) },
-  { merchant: 'Nando\'s',         category: 'food',     icon: 'flame-outline',         spentAmount: 34.60, savedAmount: 0.40, note: 'Dinner', createdAt: daysAgo(10) },
-  { merchant: 'PureGym',          category: 'health',   icon: 'barbell-outline',       spentAmount: 29.99, savedAmount: 0.01, note: 'Gym membership', createdAt: daysAgo(12) },
+  { merchant: 'Costa Coffee',   category: 'coffee',       icon: 'cafe-outline',          spentAmount: 4.60,  savedAmount: 0.40, note: 'Morning flat white',    createdAt: daysAgo(0)  },
+  { merchant: 'BP Petrol',      category: 'petrol',       icon: 'car-outline',           spentAmount: 67.50, savedAmount: 0.50, note: 'Full tank',             createdAt: daysAgo(1)  },
+  { merchant: 'Tesco',          category: 'grocery',      icon: 'basket-outline',        spentAmount: 23.45, savedAmount: 0.55, note: 'Weekly groceries',      createdAt: daysAgo(1)  },
+  { merchant: 'Uber',           category: 'transport',    icon: 'car-outline',           spentAmount: 8.20,  savedAmount: 0.80, note: 'Ride to work',          createdAt: daysAgo(2)  },
+  { merchant: 'Pret A Manger',  category: 'food',         icon: 'restaurant-outline',    spentAmount: 7.30,  savedAmount: 0.70, note: 'Lunch',                 createdAt: daysAgo(2)  },
+  { merchant: 'Starbucks',      category: 'coffee',       icon: 'cafe-outline',          spentAmount: 5.75,  savedAmount: 0.25, note: 'Caramel latte',         createdAt: daysAgo(3)  },
+  { merchant: 'Sainsbury\'s',   category: 'grocery',      icon: 'basket-outline',        spentAmount: 34.15, savedAmount: 0.85, note: 'Grocery shop',          createdAt: daysAgo(4)  },
+  { merchant: 'Shell Petrol',   category: 'petrol',       icon: 'car-outline',           spentAmount: 52.30, savedAmount: 0.70, note: 'Half tank',             createdAt: daysAgo(5)  },
+  { merchant: 'McDonald\'s',    category: 'food',         icon: 'fast-food-outline',     spentAmount: 6.75,  savedAmount: 0.25, note: 'Meal deal',             createdAt: daysAgo(6)  },
+  { merchant: 'Greggs',         category: 'food',         icon: 'restaurant-outline',    spentAmount: 3.60,  savedAmount: 0.40, note: 'Sausage roll & coffee', createdAt: daysAgo(7)  },
+  { merchant: 'Amazon',         category: 'shopping',     icon: 'bag-outline',           spentAmount: 15.30, savedAmount: 0.70, note: 'Online order',          createdAt: daysAgo(8)  },
+  { merchant: 'Aldi',           category: 'grocery',      icon: 'basket-outline',        spentAmount: 28.72, savedAmount: 0.28, note: 'Weekly shop',           createdAt: daysAgo(9)  },
+  { merchant: 'Vue Cinema',     category: 'leisure',      icon: 'film-outline',          spentAmount: 12.50, savedAmount: 0.50, note: 'Movie night',           createdAt: daysAgo(10) },
+  { merchant: 'Nando\'s',       category: 'food',         icon: 'flame-outline',         spentAmount: 34.60, savedAmount: 0.40, note: 'Dinner with friends',   createdAt: daysAgo(11) },
+  { merchant: 'Spotify',        category: 'subscription', icon: 'musical-notes-outline', spentAmount: 9.99,  savedAmount: 0.01, note: 'Monthly plan',          createdAt: daysAgo(12) },
+  { merchant: 'PureGym',        category: 'health',       icon: 'barbell-outline',       spentAmount: 29.99, savedAmount: 0.01, note: 'Gym membership',        createdAt: daysAgo(13) },
+  { merchant: 'Deliveroo',      category: 'food',         icon: 'bicycle-outline',       spentAmount: 18.40, savedAmount: 0.60, note: 'Dinner delivery',       createdAt: daysAgo(15) },
+  { merchant: 'Asda',           category: 'grocery',      icon: 'basket-outline',        spentAmount: 41.30, savedAmount: 0.70, note: 'Big weekly shop',       createdAt: daysAgo(16) },
+  { merchant: 'Esso Petrol',    category: 'petrol',       icon: 'car-outline',           spentAmount: 60.10, savedAmount: 0.90, note: 'Full tank',             createdAt: daysAgo(18) },
+  { merchant: 'Nero Coffee',    category: 'coffee',       icon: 'cafe-outline',          spentAmount: 3.85,  savedAmount: 0.15, note: 'Americano',             createdAt: daysAgo(20) },
 ];
 
 function daysAgo(n) {
@@ -33,6 +43,10 @@ exports.getTracker = async (req, res) => {
         roundUps: SEED_ROUNDUPS,
         surplus: [],
       });
+    } else if (tracker.roundUps.length === 0 && tracker.surplus.length === 0) {
+      // Existing tracker with no entries — seed sample data
+      tracker.roundUps = SEED_ROUNDUPS;
+      await tracker.save();
     }
 
     res.json({ success: true, data: tracker });
