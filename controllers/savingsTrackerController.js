@@ -41,6 +41,43 @@ exports.getTracker = async (req, res) => {
   }
 };
 
+exports.getEntries = async (req, res) => {
+  try {
+    const tracker = await SavingsTracker.findOne({ user: req.user._id });
+    if (!tracker) return res.json({ success: true, data: [] });
+
+    // Merge round-ups and surplus into one sorted list
+    const roundUps = (tracker.roundUps || []).map(e => ({
+      _id:       e._id,
+      type:      'roundup',
+      title:     e.merchant,
+      subtitle:  e.note || e.category,
+      amount:    e.savedAmount,
+      icon:      e.icon || 'storefront-outline',
+      category:  e.category,
+      createdAt: e.createdAt,
+    }));
+
+    const surplus = (tracker.surplus || []).map(e => ({
+      _id:       e._id,
+      type:      'manual',
+      title:     'Manual Deposit',
+      subtitle:  e.note || 'Manual deposit',
+      amount:    e.amount,
+      icon:      'add-circle-outline',
+      category:  'manual',
+      createdAt: e.createdAt,
+    }));
+
+    const entries = [...roundUps, ...surplus]
+      .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+    res.json({ success: true, data: entries });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
 exports.updateLimits = async (req, res) => {
   try {
     const { dailyLimit, monthlyLimit } = req.body;
